@@ -6,7 +6,9 @@
 import EDD.HashTable;
 import EDD.MonticuloBinario;
 import EDD.NodoUsuario;
-import Interfaces.Ventana1;
+import Interfaces.VentanaPrincipal;
+import static Interfaces.VentanaPrincipal.montBinario;
+import static Interfaces.VentanaPrincipal.table;
 
 /**
  *
@@ -18,22 +20,12 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        Ventana1 mainFrame = new Ventana1();
+        HashTable hash = new HashTable();
+        MonticuloBinario montBinario = new MonticuloBinario(300);
+        VentanaPrincipal mainFrame = new VentanaPrincipal(hash,montBinario);
         mainFrame.setVisible(true);
             
-        
-        
-        
-        
 //        HashTable t = new HashTable();
-//        t.Insertar("alfredo", "asdasd");
-//        t.Insertar("tomas", "asdasd");
-//        t.Insertar("crisstian", "asdasd");
-//        t.Insertar("luisStalisnao", "asdasd");
-//        t.imprimir();
-//        t.eliminar("tomas");
-//        t.eliminar("alfredo");
 //        t.imprimir();
         
         

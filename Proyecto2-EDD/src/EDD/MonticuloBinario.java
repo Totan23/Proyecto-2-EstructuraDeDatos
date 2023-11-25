@@ -12,14 +12,14 @@ import java.util.Arrays;
  */
 public class MonticuloBinario {
 
-    private int[] monticulo;
-    private int tamaño;
-    private int capacidad;
+    public NodoDocumento[] monticulo;
+    public int tamaño;
+    public int capacidad;
 
     public MonticuloBinario(int capacidad) {
         this.capacidad = capacidad;
         this.tamaño = 0;
-        this.monticulo = new int[capacidad];
+        this.monticulo = new NodoDocumento[capacidad];
     }
 
     private int obtenerIndicePadre(int indiceHijo) {
@@ -46,20 +46,20 @@ public class MonticuloBinario {
         return obtenerIndicePadre(indice) >= 0;
     }
 
-    private int hijoIzquierdo(int indice) {
+    private NodoDocumento hijoIzquierdo(int indice) {
         return monticulo[obtenerIndiceHijoIzquierdo(indice)];
     }
 
-    private int hijoDerecho(int indice) {
+    private NodoDocumento hijoDerecho(int indice) {
         return monticulo[obtenerIndiceHijoDerecho(indice)];
     }
 
-    private int padre(int indice) {
+    private NodoDocumento padre(int indice) {
         return monticulo[obtenerIndicePadre(indice)];
     }
 
     private void intercambiar(int indiceUno, int indiceDos) {
-        int temp = monticulo[indiceUno];
+        NodoDocumento temp = monticulo[indiceUno];
         monticulo[indiceUno] = monticulo[indiceDos];
         monticulo[indiceDos] = temp;
     }
@@ -71,25 +71,28 @@ public class MonticuloBinario {
         }
     }
 
-    public int verCima() {
+    public NodoDocumento verCima() {
         if (tamaño == 0) {
             throw new IllegalStateException();
         }
         return monticulo[0];
     }
 
-    public int extraer() {
-        if (tamaño == 0) {
-            throw new IllegalStateException();
-        }
-        int elemento = monticulo[0];
+    public NodoDocumento extraerMinimo() {
+        if (tamaño != 0) {
+            
+        NodoDocumento elemento = monticulo[0];
         monticulo[0] = monticulo[tamaño - 1];
         tamaño--;
         reorganizarHaciaAbajo();
-        return elemento;
+        return elemento;}
+        else{
+            System.out.println("null");
+            return null;
+        }
     }
 
-    public void insertar(int elemento) {
+    public void insertar(NodoDocumento elemento) {
         asegurarCapacidadExtra();
         monticulo[tamaño] = elemento;
         tamaño++;
@@ -98,7 +101,7 @@ public class MonticuloBinario {
 
     public void reorganizarHaciaArriba() {
         int indice = tamaño - 1;
-        while (tienePadre(indice) && padre(indice) > monticulo[indice]) {
+        while (tienePadre(indice) && padre(indice).etiquetaDeTiempo > monticulo[indice].etiquetaDeTiempo) {
             intercambiar(obtenerIndicePadre(indice), indice);
             indice = obtenerIndicePadre(indice);
         }
@@ -108,11 +111,11 @@ public class MonticuloBinario {
         int indice = 0;
         while (tieneHijoIzquierdo(indice)) {
             int indiceHijoMenor = obtenerIndiceHijoIzquierdo(indice);
-            if (tieneHijoDerecho(indice) && hijoDerecho(indice) < hijoIzquierdo(indice)) {
+            if (tieneHijoDerecho(indice) && hijoDerecho(indice).etiquetaDeTiempo < hijoIzquierdo(indice).etiquetaDeTiempo) {
                 indiceHijoMenor = obtenerIndiceHijoDerecho(indice);
             }
 
-            if (monticulo[indice] < monticulo[indiceHijoMenor]) {
+            if (monticulo[indice].etiquetaDeTiempo < monticulo[indiceHijoMenor].etiquetaDeTiempo) {
                 break;
             } else {
                 intercambiar(indice, indiceHijoMenor);
@@ -120,4 +123,16 @@ public class MonticuloBinario {
             indice = indiceHijoMenor;
         }
     }
+    
+    public String imprimirMonticulo(String doc){
+        NodoDocumento minimo = this.extraerMinimo();
+        if (minimo != null) {
+            doc += minimo.getTitulo() + ", " + minimo.getEtiquetaDeTiempo() + "\n";
+            doc = imprimirMonticulo(doc);
+            this.insertar(minimo);
+        }
+        return doc;
+    }
+    
+    
 }

@@ -3,52 +3,68 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package FileManager;
-
+import EDD.HashTable;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author jonathanpizzurro
  */
 public class LoadFile {
+    public static HashTable tabla;
+    public LoadFile(HashTable t){
+        this.tabla  = t;
+    }
 
-    public static File leerCSV() {
-        JFrame frame = new JFrame();
+    public static void leerCSV(HashTable td) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setDialogTitle("Seleccionar Archivo CSV");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos CSV", "csv"));
 
-        int result = fileChooser.showOpenDialog(frame);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-            readFile(selectedFile);
-            return selectedFile;
-        }
-        return null;
-    }
+        int seleccion = fileChooser.showOpenDialog(null);
 
-    private static void readFile(File file) {
-        try ( BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                // Dividir la línea en partes basadas en la coma
-                String[] parts = line.split(",");
-
-                // Si la línea contiene 2 partes, es una línea de datos válida
-                if (parts.length == 2) {
-                    String usuario = parts[0];
-                    String tipo = parts[1];
-                    System.out.println("Usuario: " + usuario + ", Tipo: " + tipo);
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+            try {
+                BufferedReader lector = new BufferedReader(new FileReader(archivo));
+                String linea;
+                while ((linea = lector.readLine()) != null) {
+                    leerLinea(linea, td);
                 }
+                lector.close();
+                JOptionPane.showMessageDialog(null, "Cargado Exitosamente");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al leer el archivo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún archivo.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
+    private static void leerLinea(String linea, HashTable hs) {
+        // Dividir la línea en partes basadas en la coma
+        linea = linea.replace("\"", "");
+        String[] partes = linea.split(",");
+        
+
+        // Si la línea contiene 2 partes, es una línea de datos válida
+        if (partes.length == 2) {
+            
+            String usuario = partes[0].trim();
+            String tipo = partes[1].trim();
+            
+            hs.insertarUser(usuario, tipo);
+            System.out.println("Usuario: " + usuario + ", Tipo: " + tipo);
+           
+        }
+    }
 }
